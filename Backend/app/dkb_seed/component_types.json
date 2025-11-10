@@ -1,0 +1,102 @@
+[
+  {
+    "id": "type_rdbms", 
+    "name": "Relational DB", 
+    "description": "A database based on the relational model, using SQL. (e.g., Postgres, MySQL)"
+  },
+  {
+    "id": "type_document_db", 
+    "name": "Document DB", 
+    "description": "A NoSQL database that stores data in JSON-like documents. (e.g., MongoDB)"
+  },
+  {
+    "id": "type_key_value_db", 
+    "name": "Key-Value Store", 
+    "description": "A simple NoSQL database that stores data as a collection of key-value pairs. (e.g., DynamoDB, Redis)"
+  },
+  {
+    "id": "type_column_family_db", 
+    "name": "Wide-Column Store", 
+    "description": "A NoSQL database that stores data in columns rather than rows. (e.g., Cassandra)"
+  },
+  {
+    "id": "type_graph_db", 
+    "name": "Graph DB", 
+    "description": "A NoSQL database that uses graph structures with nodes, edges, and properties. (e.g., Neo4j)"
+  },
+  {
+    "id": "type_vector_db", 
+    "name": "Vector DB", 
+    "description": "A database optimized for storing and querying vector embeddings for AI/ML. (e.g., Pinecone, Weaviate)"
+  },
+  {
+    "id": "type_time_series_db", 
+    "name": "Time-Series DB", 
+    "description": "A database optimized for time-stamped or time-series data. (e.g., InfluxDB, Prometheus)"
+  },
+  {
+    "id": "type_stream", 
+    "name": "Stream Processor", 
+    "description": "A platform for building real-time data pipelines and streaming apps. (e.g., Kafka, Pulsar)"
+  },
+  {
+    "id": "type_event_bus", 
+    "name": "Event Bus", 
+    "description": "A simpler message bus for decoupling services in event-driven architectures. (e.g., AWS EventBridge)"
+  },
+  {
+    "id": "type_cache", 
+    "name": "In-Memory Cache", 
+    "description": "An in-memory data store used to decrease latency for data access. (e.g., Redis, Memcached)"
+  },
+  {
+    "id": "type_search", 
+    "name": "Search Engine", 
+    "description": "A database optimized for text-based search and analytics. (e.g., Elasticsearch, Solr)"
+  },
+  {
+    "id": "type_orchestrator", 
+    "name": "Orchestrator", 
+    "description": "A platform for deploying and managing containerized applications. (e.g., Kubernetes, Nomad)"
+  },
+  {
+    "id": "type_service_mesh", 
+    "name": "Service Mesh", 
+    "description": "A dedicated infrastructure layer for managing service-to-service communication. (e.g., Istio, Linkerd)"
+  },
+  {
+    "id": "type_api_gateway", 
+    "name": "API Gateway", 
+    "description": "Manages API traffic, security, and routing. (e.g., Kong, AWS API Gateway)"
+  },
+  {
+    "id": "type_object_storage", 
+    "name": "Object Storage", 
+    "description": "Highly scalable storage for unstructured data (blobs, files). (e.g., S3, MinIO)"
+  },
+  {
+    "id": "type_data_processing", 
+    "name": "Data Processing Engine", 
+    "description": "A system for large-scale batch or stream data processing. (e.g., Spark, Flink)"
+  },
+  {
+    "id": "type_esb", 
+    "name": "Enterprise Service Bus", 
+    "description": "A centralized bus for message routing and transformation in SOA. (e.g., MuleSoft)"
+  },
+  {
+    "id": "type_dwh", 
+    "name": "Data Warehouse", 
+    "description": "A columnar database optimized for analytics and BI reporting. (e.g., Snowflake, BigQuery)"
+  },
+  {
+    "id": "type_data_grid", 
+    "name": "In-Memory Data Grid", 
+    "description": "A distributed in-memory store for high-speed compute and data. (e.g., Hazelcast)"
+  },
+  {
+    "id": "type_observability",
+    "name": "Observability Platform",
+    "description": "Tools for collecting, storing, and analyzing logs, metrics, and traces. (e.g., Datadog, Prometheus)"
+  }
+]

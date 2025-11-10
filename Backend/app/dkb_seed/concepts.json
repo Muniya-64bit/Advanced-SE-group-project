@@ -1,0 +1,27 @@
+{
+  "nfrs": [
+    {"id": "nfr_scalability", "name": "Scalability", "description": "Ability to handle increasing load."},
+    {"id": "nfr_resilience", "name": "Resilience", "description": "Ability to withstand and recover from failures."},
+    {"id": "nfr_low_latency", "name": "Low Latency", "description": "Responds to requests very quickly."},
+    {"id": "nfr_real_time", "name": "Real-time Processing", "description": "Processes data as it arrives, immediately."},
+    {"id": "nfr_low_complexity", "name": "Low Complexity", "description": "Easy to understand, develop, and maintain."},
+    {"id": "nfr_auditability", "name": "Auditability", "description": "Ability to trace all actions and data changes."},
+    {"id": "nfr_analytics", "name": "Analytics Capability", "description": "Supports complex business intelligence and queries."},
+    {"id": "nfr_bi_reporting", "name": "BI Reporting", "description": "Optimized for business intelligence dashboards and reports."},
+    {"id": "nfr_domain_driven", "name": "Domain-Driven", "description": "Architecture is organized around business domains."},
+    {"id": "nfr_extreme_scalability", "name": "Extreme Scalability", "description": "Handles massive, elastic loads, often by avoiding a central DB."}
+  ],
+  "constraints": [
+    {"id": "con_low_cost", "name": "Low Cost", "description": "Prioritizes minimizing operational and development costs."},
+    {"id": "con_small_team", "name": "Small Team", "description": "Suitable for a small number of developers."},
+    {"id": "con_cloud_native", "name": "Cloud Native", "description": "Assumes deployment on modern cloud infrastructure."},
+    {"id": "con_pay_per_use", "name": "Pay-per-use", "description": "Cost model is based on actual usage, not provisioning."},
+    {"id": "con_decentralized", "name": "Decentralized Team", "description": "Suitable for globally distributed or autonomous teams."}
+  ],
+  "domains": [
+    {"id": "dom_ecommerce", "name": "E-Commerce", "description": "Online sales, product catalogs, and checkouts."},
+    {"id": "dom_iot", "name": "IoT", "description": "High-volume ingestion of time-series data from devices."},
+    {"id": "dom_fintech", "name": "FinTech", "description": "Financial services, payments, and high-security transactions."},
+    {"id": "dom_analytics", "name": "Analytics Platform", "description": "Focus on data processing, reporting, and ML."}
+  ]
+}

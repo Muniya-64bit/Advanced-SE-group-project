@@ -1,0 +1,90 @@
+[
+  {
+    "id": "pattern_monolith_layered",
+    "name": "Layered Monolith",
+    "description": "Single deployable unit with layered architecture. Simpler to start, harder to scale.",
+    "pattern_type": "monolith",
+    "template": "MVC-based monolith, single RDBMS.",
+    "cost": 1
+  },
+  {
+    "id": "pattern_monolith_modular",
+    "name": "Modular Monolith",
+    "description": "A single deployable unit, but internally designed with strong module boundaries. A bridge to microservices.",
+    "pattern_type": "monolith",
+    "template": "Code-level modules, shared single DB, internal APIs/facades.",
+    "cost": 2
+  },
+  {
+    "id": "pattern_microservices_k8s",
+    "name": "Microservices on Kubernetes",
+    "description": "Decompose domain into independently deployable services, deployed on K8s with autoscaling.",
+    "pattern_type": "microservices",
+    "template": "API Gateway, Service Mesh, Horizontal Pod Autoscaling.",
+    "cost": 3
+  },
+  {
+    "id": "pattern_event_driven",
+    "name": "Event-driven Microservices",
+    "description": "Use event streams to decouple services for real-time processing and horizontal scalability.",
+    "pattern_type": "microservices",
+    "template": "Kafka for streaming; stateless services; state stores for materialized views.",
+    "cost": 2
+  },
+  {
+    "id": "pattern_serverless",
+    "name": "Serverless",
+    "description": "Function-as-a-Service for event-driven workloads with automatic scaling and pay-per-use.",
+    "pattern_type": "serverless",
+    "template": "Cloud functions + managed event bus + managed DB.",
+    "cost": 2
+  },
+  {
+    "id": "pattern_soa",
+    "name": "Service-Oriented Architecture (SOA)",
+    "description": "Coarse-grained services orchestrated via an Enterprise Service Bus (ESB).",
+    "pattern_type": "service-based",
+    "template": "ESB, SOAP/XML, shared data models, coarse-grained services.",
+    "cost": 4
+  },
+  {
+    "id": "pattern_cqrs_es",
+    "name": "CQRS + Event Sourcing",
+    "description": "Separation of read/write models and use events as the source of truth.",
+    "pattern_type": "data-architecture",
+    "template": "Append-only event store, separate read models.",
+    "cost": 4
+  },
+  {
+    "id": "pattern_data_warehouse",
+    "name": "Data Warehouse (DWH)",
+    "description": "Centralized repository for structured, historical data (ETL). Optimized for read-only analytics and BI reporting.",
+    "pattern_type": "data-architecture",
+    "template": "ETL pipelines, RDBMS/Columnar store (e.g., Redshift, BigQuery), BI tools.",
+    "cost": 3
+  },
+  {
+    "id": "pattern_data_lake",
+    "name": "Data Lake / Analytics",
+    "description": "Centralized storage of raw and processed data for analytics and ML workloads.",
+    "pattern_type": "data-architecture",
+    "template": "Object storage (S3) + data processing (Spark/Beam).",
+    "cost": 3
+  },
+  {
+    "id": "pattern_data_mesh",
+    "name": "Data Mesh",
+    "description": "A decentralized, domain-driven approach to data architecture. Treats data as a product.",
+    "pattern_type": "data-architecture",
+    "template": "Domain-oriented data products, self-serve platform, federated governance.",
+    "cost": 5
+  },
+  {
+    "id": "pattern_space_based",
+    "name": "Space-Based Architecture",
+    "description": "Solves high-scalability problems by using replicated, in-memory data grids. No central database.",
+    "pattern_type": "high-scalability",
+    "template": "In-memory data grid (e.g., Hazelcast), processing units, local cache.",
+    "cost": 4
+  }
+]
