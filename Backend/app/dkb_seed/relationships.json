@@ -1,0 +1,73 @@
+{
+  "requirement_links": [
+    {"pattern_id": "pattern_event_driven", "type_id": "type_stream"},
+    {"pattern_id": "pattern_event_driven", "type_id": "type_cache"},
+    {"pattern_id": "pattern_microservices_k8s", "type_id": "type_orchestrator"},
+    {"pattern_id": "pattern_microservices_k8s", "type_id": "type_api_gateway"},
+    {"pattern_id": "pattern_monolith_layered", "type_id": "type_rdbms"},
+    {"pattern_id": "pattern_serverless", "type_id": "type_api_gateway"},
+    {"pattern_id": "pattern_cqrs_es", "type_id": "type_stream"},
+    {"pattern_id": "pattern_data_lake", "type_id": "type_object_storage"},
+    {"pattern_id": "pattern_data_lake", "type_id": "type_data_processing"},
+    {"pattern_id": "pattern_data_warehouse", "type_id": "type_dwh"},
+    {"pattern_id": "pattern_soa", "type_id": "type_esb"},
+    {"pattern_id": "pattern_space_based", "type_id": "type_data_grid"}
+  ],
+  "concept_links": [
+    {"pattern_id": "pattern_event_driven", "concept_id": "nfr_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_event_driven", "concept_id": "nfr_real_time", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_event_driven", "concept_id": "nfr_resilience", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_event_driven", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_event_driven", "concept_id": "dom_iot", "rel_type": "SUITS"},
+
+    {"pattern_id": "pattern_microservices_k8s", "concept_id": "nfr_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_microservices_k8s", "concept_id": "nfr_resilience", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_microservices_k8s", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_microservices_k8s", "concept_id": "con_small_team", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_microservices_k8s", "concept_id": "con_cloud_native", "rel_type": "MEETS_CONSTRAINT"},
+    
+    {"pattern_id": "pattern_monolith_layered", "concept_id": "nfr_low_complexity", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_monolith_layered", "concept_id": "con_low_cost", "rel_type": "MEETS_CONSTRAINT"},
+    {"pattern_id": "pattern_monolith_layered", "concept_id": "con_small_team", "rel_type": "MEETS_CONSTRAINT"},
+    {"pattern_id": "pattern_monolith_layered", "concept_id": "nfr_scalability", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_monolith_layered", "concept_id": "nfr_resilience", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_monolith_modular", "concept_id": "nfr_low_complexity", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_monolith_modular", "concept_id": "con_small_team", "rel_type": "MEETS_CONSTRAINT"},
+    {"pattern_id": "pattern_monolith_modular", "concept_id": "nfr_scalability", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_serverless", "concept_id": "con_pay_per_use", "rel_type": "MEETS_CONSTRAINT"},
+    {"pattern_id": "pattern_serverless", "concept_id": "con_low_cost", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_serverless", "concept_id": "nfr_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_serverless", "concept_id": "nfr_low_latency", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_cqrs_es", "concept_id": "nfr_auditability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_cqrs_es", "concept_id": "nfr_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_cqrs_es", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_cqrs_es", "concept_id": "dom_fintech", "rel_type": "SUITS"},
+
+    {"pattern_id": "pattern_data_lake", "concept_id": "nfr_analytics", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_data_lake", "concept_id": "dom_analytics", "rel_type": "SUITS"},
+    {"pattern_id": "pattern_data_lake", "concept_id": "nfr_bi_reporting", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_data_warehouse", "concept_id": "nfr_bi_reporting", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_data_warehouse", "concept_id": "nfr_analytics", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_data_warehouse", "concept_id": "dom_analytics", "rel_type": "SUITS"},
+    {"pattern_id": "pattern_data_warehouse", "concept_id": "nfr_real_time", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_data_mesh", "concept_id": "nfr_domain_driven", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_data_mesh", "concept_id": "nfr_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_data_mesh", "concept_id": "con_decentralized", "rel_type": "MEETS_CONSTRAINT"},
+    {"pattern_id": "pattern_data_mesh", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_data_mesh", "concept_id": "con_small_team", "rel_type": "HINDERS"},
+
+    {"pattern_id": "pattern_soa", "concept_id": "nfr_resilience", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_soa", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"},
+    {"pattern_id": "pattern_soa", "concept_id": "con_low_cost", "rel_type": "HINDERS"},
+    
+    {"pattern_id": "pattern_space_based", "concept_id": "nfr_extreme_scalability", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_space_based", "concept_id": "nfr_low_latency", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_space_based", "concept_id": "nfr_resilience", "rel_type": "PROMOTES"},
+    {"pattern_id": "pattern_space_based", "concept_id": "nfr_low_complexity", "rel_type": "HINDERS"}
+  ]
+}
