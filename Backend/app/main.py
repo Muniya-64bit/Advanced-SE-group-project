@@ -2,8 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.health import router as health_router
 from routes.nlp_routes import router as nlp_router
+from routes.context_routes import router as context_router
 
-app = FastAPI()
+app = FastAPI(
+    title="Advanced SE Architecture Workbench API",
+    description="AI-powered architecture recommendation system with context management",
+    version="1.0.0"
+)
 
 # app.middleware("http")
 # async def log_requests(request: Request, call_next):
@@ -27,3 +32,4 @@ app.add_middleware(
 
 app.include_router(health_router)
 app.include_router(nlp_router)
+app.include_router(context_router)
