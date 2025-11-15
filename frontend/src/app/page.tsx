@@ -1,14 +1,12 @@
-import { useState } from 'react'
+import { useState } from "react"
 import LoginPage from "@/components/auth/login-page"
 import WorkbenchLayout from "@/components/workbench/workbench-layout"
-import './App.css'
 
-function App() {
+export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const handleLogin = (email: string, password: string) => {
     // Mock authentication
-    console.log('Login attempt:', email, password)
     setIsAuthenticated(true)
   }
 
@@ -16,15 +14,9 @@ function App() {
     setIsAuthenticated(false)
   }
 
-  return (
-    <div className="h-full w-full">
-      {!isAuthenticated ? (
-        <LoginPage onLogin={handleLogin} />
-      ) : (
-        <WorkbenchLayout onLogout={handleLogout} />
-      )}
-    </div>
-  )
-}
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />
+  }
 
-export default App
+  return <WorkbenchLayout onLogout={handleLogout} />
+}
