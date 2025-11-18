@@ -2,7 +2,7 @@ import spacy
 from typing import List, Dict, Any, Tuple
 import re
 from collections import defaultdict
-from models.requirements_model import (
+from app.models.requirements_model import (
     RequirementsAnalysisOutput,
     FunctionalRequirement,
     NonFunctionalRequirement,

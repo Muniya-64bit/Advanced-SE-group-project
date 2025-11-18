@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models.requirements_model import RequirementsInput, RequirementsAnalysisOutput
-from controllers.NLP_Processor import NLPProcessor
+from app.models.requirements_model import RequirementsInput, RequirementsAnalysisOutput
+from app.controllers.NLP_Processor import NLPProcessor
 
 router = APIRouter(prefix="/api/nlp", tags=["NLP Analysis"])
 

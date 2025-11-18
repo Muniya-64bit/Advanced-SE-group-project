@@ -4,10 +4,10 @@ Handles session creation, message history, and contextual interactions
 """
 
 from fastapi import APIRouter, HTTPException
-from controllers.context_manager import context_manager
-from controllers.NLP_Processor import NLPProcessor
-from controllers.RAG import get_architecture_recommendation
-from models.context_models import (
+from app.controllers.context_manager import context_manager
+from app.controllers.NLP_Processor import NLPProcessor
+from app.controllers.RAG import get_architecture_recommendation
+from app.models.context_models import (
     SessionCreate,
     SessionResponse,
     MessageInput,
@@ -23,7 +23,7 @@ from models.context_models import (
     SessionListResponse,
     CleanupResponse
 )
-from models.requirements_model import RequirementsAnalysisOutput
+from app.models.requirements_model import RequirementsAnalysisOutput
 from typing import Optional
 
 router = APIRouter(prefix="/api/context", tags=["Context Management"])

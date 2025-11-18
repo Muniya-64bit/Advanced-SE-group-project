@@ -13,6 +13,9 @@ USER = os.getenv("NEO4J_USER")
 PASS = os.getenv("NEO4J_PASSWORD")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# json_path = os.path.join(BASE_DIR, "dkb_embeddings.json")
+
 if GEMINI_KEY:
     genai.configure(api_key=GEMINI_KEY)
     print("Gemini API configured.")
@@ -31,22 +34,24 @@ try:
     print("Loading sentence-transformer model...")
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
-    print("Loading DKB embeddings from 'dkb_embeddings.json'...")
-    with open('dkb_embeddings.json', 'r') as f:
+    # Correct absolute path
+    ROOT = os.path.dirname(os.path.abspath(__file__))
+    json_path = os.path.join(ROOT, "dkb_embeddings.json")
+
+    print(f"Loading DKB embeddings from {json_path}...")
+    with open(json_path, "r") as f:
         dkb_data = json.load(f)
-    
-    dkb_concepts = dkb_data['concepts'] 
+
+    dkb_concepts = dkb_data['concepts']
     dkb_embeddings_matrix = np.array(dkb_data['embeddings'])
-    
+
     print(f"Successfully loaded {len(dkb_concepts)} DKB concepts.")
 
 except FileNotFoundError:
-    print("Error: 'dkb_embeddings.json' not found.")
-    print("Please run 'create_embeddings.py' first.")
+    print("Error: dkb_embeddings.json not found.")
+    print("Expected path:", json_path)
     dkb_concepts = None
-except Exception as e:
-    print(f"Error loading embedding model or data: {e}")
-    dkb_concepts = None
+
 
 
 def _stage_1_mapper_embedding(nlp_json: dict) -> dict:
@@ -336,52 +341,52 @@ def get_architecture_recommendation(nlp_json_input: dict) -> str:
 # EXAMPLE USAGE
 # ======================================================================
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     
-    # The JSON you provided
-    example_nlp_input = {
-      "summary": "Build an intercity ride-sharing application that can handle 10000 concurrent users.. GDPR, AWS, Stripe",
-      "functional_requirements": [
-          {
-              "id": "FR1",
-              "text": "Drivers can accept ride requests."
-          }
-      ],
-      "non_functional_requirements": [
-        {
-          "id": "NFR1",
-          "text": "Ride matching latency should be less than 200ms.",
-          "category": "performance"
-        },
-        {
-          "id": "NFR2",
-          "text": "The system must comply with GDPR regulations.",
-          "category": "security"
-        }
-      ],
-      "constraints": [
-        {
-          "id": "C2",
-          "text": "The system should be deployed on AWS.",
-          "type": "deployment"
-        }
-      ],
-      "raw_input": "Build an intercity ride-sharing application that can handle 10000 concurrent users..."
-    }
+#     # The JSON you provided
+#     example_nlp_input = {
+#       "summary": "Build an intercity ride-sharing application that can handle 10000 concurrent users.. GDPR, AWS, Stripe",
+#       "functional_requirements": [
+#           {
+#               "id": "FR1",
+#               "text": "Drivers can accept ride requests."
+#           }
+#       ],
+#       "non_functional_requirements": [
+#         {
+#           "id": "NFR1",
+#           "text": "Ride matching latency should be less than 200ms.",
+#           "category": "performance"
+#         },
+#         {
+#           "id": "NFR2",
+#           "text": "The system must comply with GDPR regulations.",
+#           "category": "security"
+#         }
+#       ],
+#       "constraints": [
+#         {
+#           "id": "C2",
+#           "text": "The system should be deployed on AWS.",
+#           "type": "deployment"
+#         }
+#       ],
+#       "raw_input": "Build an intercity ride-sharing application that can handle 10000 concurrent users..."
+#     }
 
-    # --- Run the full process ---
-    if dkb_concepts and GEMINI_KEY: # Only run if the app loaded correctly
-        recommendation = get_architecture_recommendation(example_nlp_input)
+#     # --- Run the full process ---
+#     if dkb_concepts and GEMINI_KEY: # Only run if the app loaded correctly
+#         recommendation = get_architecture_recommendation(example_nlp_input)
         
-        print("\n--- FINAL ANSWER ---")
-        print(recommendation)
-        print("=========================\n")
-    elif not GEMINI_KEY:
-        print("Could not run example: GEMINI_API_KEY is not set in .env file.")
-    elif not dkb_concepts:
-         print("Could not run example: dkb_embeddings.json not found or failed to load.")
+#         print("\n--- FINAL ANSWER ---")
+#         print(recommendation)
+#         print("=========================\n")
+#     elif not GEMINI_KEY:
+#         print("Could not run example: GEMINI_API_KEY is not set in .env file.")
+#     elif not dkb_concepts:
+#          print("Could not run example: dkb_embeddings.json not found or failed to load.")
     
-    # Close the driver when the script is done
-    if driver:
-        driver.close()
-        print("Neo4j connection closed.")
+#     # Close the driver when the script is done
+#     if driver:
+#         driver.close()
+#         print("Neo4j connection closed.")
