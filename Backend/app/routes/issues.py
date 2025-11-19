@@ -24,27 +24,133 @@ class IssueChatRequest(BaseModel):
 
 # --- System Prompt ---
 
-ISSUES_SYSTEM_INSTRUCTION = """
-You are an Expert Software Architecture Consultant and Technical Lead.
-Your role is to answer questions, solve problems, and provide guidance specifically regarding the user's defined software architecture.
+# ISSUES_SYSTEM_INSTRUCTION = """
+# You are an Expert Software Architecture Consultant and Technical Lead.
+# Your sole responsibility is to answer questions, solve architectural issues, and provide guidance
+# based strictly on the user's provided architecture context.
 
-CONTEXTUAL AWARENESS:
-1. You will be provided with an "Existing Architecture Design". This is the absolute truth of the project.
-2. You will be provided with "Chat History" to understand the conversation flow.
+# =====================================================================
+# MERMAID VERSION REQUIREMENTS — IMPORTANT  
+# =====================================================================
+# All diagrams MUST follow **Mermaid.js v11.12.1** syntax.
 
-GUIDELINES:
-- **Be Specific:** Do not give generic advice. Reference the specific technologies, modules, and patterns defined in the Context. 
-- **Use Diagrams:** If a solution requires visual explanation, use Mermaid.js syntax wrapped in ```mermaid code blocks.
-- **Be Concise:** Get straight to the solution. Use bullet points for readability.
-- **Problem Solving:** If the user reports an issue (e.g., "latency is high"), analyze their specific architecture to find the bottleneck (e.g., "You are using a Monolith but have high NFRs, consider caching with Redis").
+# ❗ STRICT RULES:
+# - Use **ONLY syntax supported in Mermaid v11.12.1**.
+# - Do NOT use deprecated or older 8.x/9.x syntax.
+# - Do NOT use future syntax from 12.x or experimental features.
+# - NO `sequenceDiagram` activation arrows (`activate`, `deactivate`).
+# - NO `flowchart LR;` on one line with extra semicolons — follow clean block syntax.
+# - Use `flowchart`, `classDiagram`, `erDiagram`, `stateDiagram`, `gantt`, or `mindmap` as defined in v11.12.1.
+# - Every diagram must be wrapped inside:
 
-FORMATTING:
-- Use Markdown for all responses.
-- Code blocks for code snippets.
-- Mermaid blocks for diagrams.
-"""
+# ```mermaid
+# <diagram>
+# Must NOT include raw HTML, CSS or JS inside Mermaid blocks.
 
+# Avoid SVG attributes; Mermaid will generate them automatically.
+
+# =====================================================================
+# GENERAL RESPONSE GUIDELINES
+# Be Specific — reference the technologies and modules in the provided architecture.
+
+# Be Accurate — if proposing changes, explain exactly where they fit in the architecture.
+
+# Be Concise — prioritize clarity and bullet points.
+
+# Be Problem-Oriented — if the user reports an issue (latency, errors, bottlenecks),
+# analyze the architecture and propose targeted solutions.
+
+# Use Mermaid — when describing system structure, flows, pipelines, interactions,
+# or deployment models.
+
+# Never hallucinate new technologies not present in the architecture context unless asked.
+
+# =====================================================================
+# RESPONSE FORMAT
+# Your output MUST follow this order:
+
+# Short summary (1–2 sentences)
+
+# Direct answer to the question
+
+# Architecture-specific reasoning
+
+# (Optional) Mermaid DIAGRAMS using v11.12.1
+
+# If relevant, recommended improvements
+
+# All responses MUST be in Markdown format.
+# IMPORTANT MERMAID LABEL RULES (v11.12.1):
+# - Node labels must NOT contain raw parentheses (), commas, semicolons, or pipes.
+# - If parentheses are required, wrap the label in quotes:
+#   A["Database (Postgres)"]
+# - Alternatively rewrite as:
+#   A[Database: Postgres]
+# - Never output labels like:
+#   A[Service (API)]
+#   B[Auth(User)]
+# - Always quote ANY label containing special characters:
+#   ["Example (Text)"]
+
+# """
 # --- Endpoint ---
+
+ISSUES_SYSTEM_INSTRUCTION = """You are an Expert Software Architecture Consultant and Technical Lead.
+Your sole responsibility is to answer questions, solve architectural issues, and provide guidance
+based strictly on the user's provided architecture context.
+
+=====================================================================
+MERMAID VERSION REQUIREMENTS — IMPORTANT  
+=====================================================================
+All diagrams MUST follow **Mermaid.js v11.12.1** syntax.
+
+❗ STRICT RULES:
+- Use **ONLY syntax supported in Mermaid v11.12.1**.
+- Do NOT use deprecated or older 8.x/9.x syntax.
+- Do NOT use future syntax from 12.x or experimental features.
+- NO `sequenceDiagram` activation arrows (`activate`, `deactivate`).
+- NO `flowchart LR;` on one line with extra semicolons — follow clean block syntax.
+- Use `flowchart`, `classDiagram`, `erDiagram`, `stateDiagram`, `gantt`, or `mindmap` as defined in v11.12.1.
+- Every diagram must be wrapped inside:
+
+```mermaid
+<diagram>
+Must NOT include raw HTML, CSS or JS inside Mermaid blocks.
+
+Avoid SVG attributes; Mermaid will generate them automatically.
+
+=====================================================================
+GENERAL RESPONSE GUIDELINES
+Be Specific — reference the technologies and modules in the provided architecture.
+
+Be Accurate — if proposing changes, explain exactly where they fit in the architecture.
+
+Be Concise — prioritize clarity and bullet points.
+
+Be Problem-Oriented — if the user reports an issue (latency, errors, bottlenecks),
+analyze the architecture and propose targeted solutions.
+
+Use Mermaid — when describing system structure, flows, pipelines, interactions,
+or deployment models.
+
+Never hallucinate new technologies not present in the architecture context unless asked.
+
+=====================================================================
+RESPONSE FORMAT
+Your output MUST follow this order:
+
+Short summary (1–2 sentences)
+
+Direct answer to the question
+
+Architecture-specific reasoning
+
+(Optional) Mermaid DIAGRAMS using v11.12.1
+
+If relevant, recommended improvements
+
+All responses MUST be in Markdown format.
+"""
 
 @router.post("/issues/chat")
 async def chat_with_issues(request: IssueChatRequest):
@@ -52,28 +158,46 @@ async def chat_with_issues(request: IssueChatRequest):
         raise HTTPException(status_code=500, detail="Gemini API Key not configured.")
 
     try:
-        # 1. Extract Architecture Context
-        # The frontend might send the whole context object, we mainly need the summary/recommendation
-        arch_summary = "No architecture defined yet."
-        if request.context:
-            # Try to find the most descriptive text available
-            arch_summary = (
-                request.context.get("summary") or 
-                request.context.get("recommendation") or 
-                request.context.get("message") or 
-                "No detailed architecture found."
-            )
+        # 1. Robust Extraction of Architecture Context
+        arch_context_data = request.context or {}
+        arch_summary = ""
+
+        # STRATEGY A: Check specific fields for the proposal
+        if arch_context_data.get("recommendation"):
+            arch_summary = arch_context_data.get("recommendation")
+        
+        # STRATEGY B: Check 'summary' but filter out short placeholders
+        # Your log showed summary was just "Architecture update", which is useless.
+        elif arch_context_data.get("summary") and len(arch_context_data.get("summary")) > 50:
+            arch_summary = arch_context_data.get("summary")
+
+        # STRATEGY C: (CRITICAL FIX) Dig into the message history
+        # The actual proposal is usually the last message sent by the assistant
+        if not arch_summary and arch_context_data.get("messages"):
+            messages = arch_context_data.get("messages", [])
+            # Iterate backwards to find the latest detailed response
+            for msg in reversed(messages):
+                content = msg.get("content", "")
+                role = msg.get("role", "")
+                # We look for an assistant message that is long enough to be a proposal
+                if role == "assistant" and len(content) > 200: 
+                    arch_summary = content
+                    break
+        
+        # Fallback
+        if not arch_summary:
+            arch_summary = "No detailed architecture design found in the context."
 
         # 2. Format Chat History for the Prompt
-        # We convert the list of objects into a readable script format
         history_text = ""
         if request.history:
             for msg in request.history:
                 role_label = "USER" if msg.role == "user" else "ARCHITECT"
-                history_text += f"{role_label}: {msg.content}\n"
+                # Ensure content isn't None
+                content = msg.content if msg.content else ""
+                history_text += f"{role_label}: {content}\n"
 
-        # 3. Construct the User Message with Context Injection
-        # We inject the context into the user's message so the model sees it immediately
+        # 3. Construct the Prompt
         full_prompt_content = f"""
 === EXISTING ARCHITECTURE DESIGN ===
 {arch_summary}
@@ -87,12 +211,13 @@ async def chat_with_issues(request: IssueChatRequest):
 {request.message}
 =============================
 
-Please answer the user's question based strictly on the Architecture Design above.
+Based strictly on the "EXISTING ARCHITECTURE DESIGN" above, answer the user's question. 
+If the user asks for diagrams, generating them using Mermaid.js syntax.
 """
 
         # 4. Call Gemini API
         response = await client.aio.models.generate_content(
-            model='gemini-2.0-flash', # Or 'gemini-1.5-flash'
+            model='gemini-2.0-flash',
             contents=[
                 types.Content(
                     role="user",
@@ -101,7 +226,7 @@ Please answer the user's question based strictly on the Architecture Design abov
             ],
             config=types.GenerateContentConfig(
                 system_instruction=ISSUES_SYSTEM_INSTRUCTION,
-                temperature=0.4 # Lower temperature for more technical/precise answers
+                temperature=0.4
             )
         )
 
