@@ -10,6 +10,7 @@ const ArchitectureChat = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
   const [enhancing, setEnhancing] = useState(false);
   const [selectedMessageIndex, setSelectedMessageIndex] = useState(null);
+  const [viewMode, setViewMode] = useState("full"); // "full", "description", "diagrams"
   const messagesEndRef = useRef(null);
   const responseEndRef = useRef(null);
   const { updateArchitectureContext } = useProject();
@@ -48,8 +49,37 @@ const ArchitectureChat = ({ projectId }) => {
     // Auto-select the latest response when new assistant messages arrive
     if (assistantMessages.length > 0) {
       setSelectedMessageIndex(assistantMessages.length - 1);
+      setViewMode("full"); // Reset to full view when new message arrives
     }
   }, [assistantMessages.length]);
+
+  // Function to extract content parts (description and diagrams)
+  const extractContentParts = (content) => {
+    const mermaidRegex = /```mermaid\n([\s\S]*?)```/g;
+    const diagrams = [];
+    let match;
+
+    while ((match = mermaidRegex.exec(content)) !== null) {
+      diagrams.push(match[0]);
+    }
+
+    // Remove mermaid diagrams from content to get description
+    const description = content.replace(mermaidRegex, "").trim();
+
+    return { description, diagrams };
+  };
+
+  // Get filtered content based on view mode
+  const getFilteredContent = (content) => {
+    if (viewMode === "full") return content;
+
+    const { description, diagrams } = extractContentParts(content);
+
+    if (viewMode === "description") return description;
+    if (viewMode === "diagrams") return diagrams.join("\n\n");
+
+    return content;
+  };
 
   const handleEnhancePrompt = async () => {
     if (!input.trim()) return;
@@ -275,12 +305,11 @@ const ArchitectureChat = ({ projectId }) => {
 
       {/* Right Panel - Response Display */}
       <div className="flex-1 flex flex-col bg-theme-bg-dark">
-        <div className="flex-1 overflow-y-auto">
-          {selectedMessageIndex !== null &&
-          assistantMessages[selectedMessageIndex] ? (
-            <div className="p-6">
-              <div className="mb-4">
-                <div className="flex items-center space-x-2 mb-2">
+        {selectedMessageIndex !== null &&
+          assistantMessages[selectedMessageIndex] && (
+            <div className="border-b border-theme-border bg-theme-bg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center relative overflow-hidden group">
                     <div className="absolute inset-0 bg-teal-500/5 blur-lg group-hover:bg-teal-500/10 transition-all duration-500"></div>
                     <Sparkles className="w-5 h-5 text-teal-500 relative z-10" />
@@ -296,10 +325,54 @@ const ArchitectureChat = ({ projectId }) => {
                     </p>
                   </div>
                 </div>
+
+                {/* View Mode Buttons */}
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setViewMode("full")}
+                    className={`px-3 py-1.5 text-xs font-medium rounded transition-all duration-200 ${
+                      viewMode === "full"
+                        ? "bg-teal-500 text-white"
+                        : "bg-theme-bg-dark text-theme-text-muted hover:bg-theme-border hover:text-theme-text"
+                    }`}
+                  >
+                    Full View
+                  </button>
+
+                  <button
+                    onClick={() => setViewMode("diagrams")}
+                    className={`px-3 py-1.5 text-xs font-medium rounded transition-all duration-200 ${
+                      viewMode === "diagrams"
+                        ? "bg-teal-500 text-white"
+                        : "bg-theme-bg-dark text-theme-text-muted hover:bg-theme-border hover:text-theme-text"
+                    }`}
+                  >
+                    Diagrams Only
+                  </button>
+                  <button
+                    onClick={() => setViewMode("description")}
+                    className={`px-3 py-1.5 text-xs font-medium rounded transition-all duration-200 ${
+                      viewMode === "description"
+                        ? "bg-teal-500 text-white"
+                        : "bg-theme-bg-dark text-theme-text-muted hover:bg-theme-border hover:text-theme-text"
+                    }`}
+                  >
+                    Description
+                  </button>
+                </div>
               </div>
+            </div>
+          )}
+
+        <div className="flex-1 overflow-y-auto">
+          {selectedMessageIndex !== null &&
+          assistantMessages[selectedMessageIndex] ? (
+            <div className="p-6">
               <div className="prose-invert max-w-none">
                 <MessageRenderer
-                  content={assistantMessages[selectedMessageIndex].content}
+                  content={getFilteredContent(
+                    assistantMessages[selectedMessageIndex].content
+                  )}
                 />
               </div>
               <div ref={responseEndRef} />

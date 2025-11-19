@@ -87,7 +87,11 @@ const Login = () => {
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-500/10 rounded-lg mb-4 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-teal-500/5 blur-xl group-hover:bg-teal-500/10 transition-all duration-500"></div>
-                <Brain className="w-10 h-10 text-teal-500 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                <img
+                  src="/src/assets/architecture.png"
+                  alt="AI Architect Logo"
+                  className="w-10 h-10 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300"
+                />
               </div>
               <h1 className="text-3xl font-bold text-theme-text mb-2">
                 Welcome Back

@@ -66,7 +66,11 @@ const Dashboard = () => {
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center relative overflow-hidden group">
                 <div className="absolute inset-0 bg-teal-500/5 blur-lg group-hover:bg-teal-500/10 transition-all duration-500"></div>
-                <Brain className="w-6 h-6 text-teal-500 relative z-10" />
+                <img
+                  src="/src/assets/architecture.png"
+                  alt="AI Architect Logo"
+                  className="w-6 h-6 object-contain relative z-10"
+                />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-theme-text">
