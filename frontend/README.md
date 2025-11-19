@@ -1,73 +1,264 @@
-# React + TypeScript + Vite
+# AI-Powered Software Architect Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, attractive frontend for an AI-powered software architecture design assistant built with React, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🔐 Authentication
 
-## React Compiler
+- **Google OAuth Integration**: Secure authentication with Google
+- Protected routes and session management
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📁 Project Management
 
-## Expanding the ESLint configuration
+- Create and manage multiple architecture projects
+- Organized workspace with project overview
+- Easy navigation between projects
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🏗️ Architecture Design Chat
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **AI-Powered Architecture Generation**: Get comprehensive architecture recommendations
+- **Mermaid Diagram Support**: Visualize UML diagrams directly in the chat
+- **Prompt Enhancement**: AI-powered prompt enhancement to get more detailed requirements
+- **Rich Content Display**:
+  - Functional & Non-functional Requirements
+  - Architectural Patterns & Styles
+  - High-level Architecture Diagrams
+  - Technology Stack Recommendations
+  - Data & Storage Management
+  - Integration & Third-party Services
+  - Deployment Strategies
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🐛 Issues & Q&A Chat
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Context-Aware Answers**: Automatically includes architecture design context
+- Ask questions about your architecture and get expert solutions
+- Smart context sharing between Architecture and Issues chats
+- Visual indicators showing context availability
+
+### 📝 Rich Text Formatting
+
+- **Bold** and _Italic_ text support
+- Code syntax highlighting
+- Tables and lists
+- Blockquotes and links
+- Markdown rendering with proper styling
+
+### 🎨 Modern UI/UX
+
+- Dark theme optimized for long coding sessions
+- Smooth animations and transitions
+- Responsive design for all screen sizes
+- Clean, professional interface
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- A Google OAuth Client ID (for authentication)
+
+### Installation
+
+1. **Clone or navigate to the project directory**:
+
+   ```bash
+   cd "d:\Code Projects\front"
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+
+   Create a `.env` file in the root directory:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` and add your Google Client ID:
+
+   ```env
+   VITE_GOOGLE_CLIENT_ID=your-google-client-id-here
+   VITE_API_URL=http://localhost:8000
+   ```
+
+4. **Start the development server**:
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**:
+   Navigate to `http://localhost:3000`
+
+## 🔧 Configuration
+
+### Google OAuth Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized JavaScript origins: `http://localhost:3000`
+6. Copy the Client ID and add it to your `.env` file
+
+### Backend API Setup
+
+The frontend is configured to call a backend route `chat.py`. Ensure your backend:
+
+1. Has a `/chat.py` endpoint that accepts POST requests
+2. Handles two chat types: `architecture` and `issue`
+3. Supports prompt enhancement with `action: 'enhance'`
+4. Returns responses in the expected format
+
+**Example Backend Request Format**:
+
+```json
+{
+  "message": "User's message",
+  "projectId": "project-id",
+  "chatType": "architecture" | "issue",
+  "context": { /* architecture context for issue chats */ },
+  "action": "enhance" /* for prompt enhancement */
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```
+front/
+├── src/
+│   ├── components/
+│   │   ├── Auth/
+│   │   │   └── Login.jsx          # Google OAuth login
+│   │   ├── Chat/
+│   │   │   ├── ArchitectureChat.jsx  # Architecture design chat
+│   │   │   └── IssuesChat.jsx        # Issues & Q&A chat
+│   │   ├── Common/
+│   │   │   └── MessageRenderer.jsx   # Markdown + Mermaid renderer
+│   │   ├── Dashboard/
+│   │   │   └── Dashboard.jsx      # Project management dashboard
+│   │   └── Project/
+│   │       └── ProjectView.jsx    # Project detail view with tabs
+│   ├── contexts/
+│   │   ├── AuthContext.jsx        # Authentication state
+│   │   └── ProjectContext.jsx     # Project & context management
+│   ├── services/
+│   │   └── api.js                 # API service layer
+│   ├── App.jsx                    # Main app component
+│   ├── main.jsx                   # App entry point
+│   └── index.css                  # Global styles + Tailwind
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+└── postcss.config.js
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🎯 Key Features Implementation
+
+### 1. Mermaid Diagram Rendering
+
+Mermaid diagrams are automatically detected and rendered in chat responses:
+
+````markdown
+```mermaid
+graph TB
+    A[Client] --> B[Server]
+    B --> C[Database]
+```
+````
+
+```
+
+### 2. Context Sharing
+
+Architecture design context is automatically captured and shared with the Issues chat:
+
+- When you generate an architecture design, the context is saved
+- Issues & Q&A chat includes this context in every request
+- Visual indicators show when context is available
+
+### 3. Prompt Enhancement
+
+Click the "Enhance" button to:
+- Send your prompt to the LLM
+- Get a detailed, comprehensive prompt back
+- Edit the enhanced prompt before sending
+- Get better architecture recommendations
+
+### 4. Text Formatting
+
+All responses support markdown formatting:
+- **Bold text** with `**text**`
+- *Italic text* with `*text*`
+- Code blocks with syntax highlighting
+- Tables, lists, and more
+
+## 🛠️ Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+
+## 🌐 Browser Support
+
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+
+## 📝 Notes
+
+- The application uses localStorage for demo purposes
+- For production, implement proper backend authentication
+- Mermaid diagrams require a modern browser with SVG support
+- The demo responses are shown when backend is unavailable
+
+## 🤝 Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🎨 Tech Stack
+
+- **React 18** - UI framework
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Router** - Client-side routing
+- **Axios** - HTTP client
+- **Mermaid** - Diagram generation
+- **React Markdown** - Markdown rendering
+- **Lucide React** - Icon library
+- **Google OAuth** - Authentication
+
+## 🚨 Troubleshooting
+
+### Issue: Mermaid diagrams not rendering
+- Clear browser cache
+- Check console for errors
+- Ensure proper mermaid code block syntax
+
+### Issue: Google OAuth not working
+- Verify Google Client ID in `.env`
+- Check authorized origins in Google Console
+- Ensure you're using HTTP/HTTPS (not file://)
+
+### Issue: Backend connection failed
+- Check `VITE_API_URL` in `.env`
+- Ensure backend server is running
+- Verify CORS settings on backend
+
+---
+
+**Built with ❤️ for software architects**
 ```
