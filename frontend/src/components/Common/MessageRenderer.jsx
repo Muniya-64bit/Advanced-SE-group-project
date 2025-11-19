@@ -1,69 +1,147 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import mermaid from "mermaid";
-
-// Initialize Mermaid
-mermaid.initialize({
-  startOnLoad: false,
-  theme: "dark",
-  securityLevel: "loose",
-  themeVariables: {
-    primaryColor: "#0ea5e9",
-    primaryTextColor: "#fff",
-    primaryBorderColor: "#0284c7",
-    lineColor: "#64748b",
-    secondaryColor: "#7c3aed",
-    tertiaryColor: "#f59e0b",
-    background: "#1e293b",
-    mainBkg: "#1e293b",
-    textColor: "#f1f5f9",
-  },
-});
+import { useTheme } from "../../contexts/ThemeContext";
 
 const MessageRenderer = ({ content }) => {
   const mermaidRef = useRef(0);
+  const { theme } = useTheme();
+  const [diagramCache, setDiagramCache] = useState(new Map());
+  const containerRef = useRef(null);
+
+  // Initialize or reconfigure Mermaid based on theme
+  useEffect(() => {
+    const isDark = theme === "dark";
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isDark ? "dark" : "default",
+      securityLevel: "loose",
+      themeVariables: isDark
+        ? {
+            primaryColor: "#0ea5e9",
+            primaryTextColor: "#fff",
+            primaryBorderColor: "#0284c7",
+            lineColor: "#64748b",
+            secondaryColor: "#7c3aed",
+            tertiaryColor: "#f59e0b",
+            background: "#1e293b",
+            mainBkg: "#1e293b",
+            textColor: "#f1f5f9",
+            nodeBorder: "#0284c7",
+            clusterBkg: "#334155",
+            clusterBorder: "#475569",
+            edgeLabelBackground: "#1e293b",
+          }
+        : {
+            primaryColor: "#0ea5e9",
+            primaryTextColor: "#1f2937",
+            primaryBorderColor: "#0284c7",
+            lineColor: "#6b7280",
+            secondaryColor: "#7c3aed",
+            tertiaryColor: "#f59e0b",
+            background: "#ffffff",
+            mainBkg: "#f9fafb",
+            textColor: "#1f2937",
+            nodeBorder: "#0284c7",
+            clusterBkg: "#f3f4f6",
+            clusterBorder: "#d1d5db",
+            edgeLabelBackground: "#ffffff",
+          },
+    });
+  }, [theme]);
 
   useEffect(() => {
-    // Render all mermaid diagrams after component mounts
+    // Render all mermaid diagrams after component mounts or content/theme changes
     const renderMermaid = async () => {
       const mermaidElements = document.querySelectorAll(".mermaid-diagram");
 
       for (const element of mermaidElements) {
-        if (element.getAttribute("data-processed") !== "true") {
-          try {
-            const id = `mermaid-${mermaidRef.current++}`;
-            const code = element.textContent;
+        const code = element.getAttribute("data-mermaid-code");
+        if (!code) continue;
+
+        const cacheKey = `${code}-${theme}`;
+
+        try {
+          // Check if we have a cached version for this theme
+          if (diagramCache.has(cacheKey)) {
+            element.innerHTML = diagramCache.get(cacheKey);
+          } else {
+            const id = `mermaid-${mermaidRef.current++}-${Date.now()}`;
             const { svg } = await mermaid.render(id, code);
             element.innerHTML = svg;
-            element.setAttribute("data-processed", "true");
-          } catch (error) {
-            console.error("Mermaid rendering error:", error);
-            element.innerHTML = `<div class="text-teal-400 text-sm p-4">Error rendering diagram</div>`;
+
+            // Cache the rendered SVG
+            setDiagramCache((prev) => {
+              const newCache = new Map(prev);
+              newCache.set(cacheKey, svg);
+              return newCache;
+            });
           }
+          element.setAttribute("data-rendered", "true");
+        } catch (error) {
+          console.error("Mermaid rendering error:", error);
+          element.innerHTML = `<div class="text-red-400 text-sm p-4 bg-red-500/10 rounded border border-red-500/20">Error rendering diagram: ${error.message}</div>`;
         }
       }
     };
 
-    renderMermaid();
-  }, [content]);
+    // Use a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      renderMermaid();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [content, theme, diagramCache]);
+
+  // Handle page visibility change (when user switches tabs and comes back)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Page became visible, re-render diagrams if needed
+        const mermaidElements = document.querySelectorAll(".mermaid-diagram");
+        mermaidElements.forEach((element) => {
+          const code = element.getAttribute("data-mermaid-code");
+          if (code && !element.querySelector("svg")) {
+            const cacheKey = `${code}-${theme}`;
+            if (diagramCache.has(cacheKey)) {
+              element.innerHTML = diagramCache.get(cacheKey);
+            }
+          }
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [theme, diagramCache]);
 
   // Custom component for code blocks to handle mermaid
   const CodeBlock = ({ node, inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || "");
     const language = match ? match[1] : "";
+    const code = String(children).replace(/\n$/, "");
 
     if (!inline && language === "mermaid") {
       return (
-        <div className="mermaid-diagram my-4 p-4 bg-slate-900 rounded-lg overflow-x-auto">
-          {String(children).replace(/\n$/, "")}
+        <div
+          className="mermaid-diagram my-4 p-4 bg-theme-bg-dark rounded-lg overflow-x-auto border border-theme-border"
+          data-mermaid-code={code}
+          data-rendered="false"
+        >
+          {/* Placeholder text shown before rendering */}
+          <div className="text-theme-text-muted text-sm">
+            Loading diagram...
+          </div>
         </div>
       );
     }
 
     if (!inline) {
       return (
-        <pre className="bg-slate-900 p-4 rounded-lg overflow-x-auto my-4">
+        <pre className="bg-theme-bg-dark border border-theme-border p-4 rounded-lg overflow-x-auto my-4">
           <code className={className} {...props}>
             {children}
           </code>
@@ -73,7 +151,7 @@ const MessageRenderer = ({ content }) => {
 
     return (
       <code
-        className="bg-slate-700 px-2 py-1 rounded text-sm font-mono text-teal-400"
+        className="bg-theme-bg-dark border border-theme-border px-2 py-1 rounded text-sm font-mono text-teal-400"
         {...props}
       >
         {children}
@@ -82,7 +160,7 @@ const MessageRenderer = ({ content }) => {
   };
 
   return (
-    <div>
+    <div ref={containerRef}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

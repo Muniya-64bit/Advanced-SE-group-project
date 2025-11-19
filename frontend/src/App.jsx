@@ -7,6 +7,8 @@ import {
 import { useState, useEffect } from "react";
 import HomePage from "./components/Home/HomePage";
 import Login from "./components/Auth/Login";
+import SignUp from "./components/Auth/SignUp";
+import AuthCallback from "./components/Auth/AuthCallback";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ProjectView from "./components/Project/ProjectView";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -24,6 +26,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/project/:projectId" element={<ProjectView />} />
               </Routes>
