@@ -37,7 +37,6 @@ def _serialize(obj: Any):
 async def ask(payload: AskRequest):
     if not payload.query or not payload.query.strip():
         raise HTTPException(status_code=400, detail="query is required")
-
     # 1) NLP analysis
     try:
         nlp_output = _nlp_processor.analyze_requirements(payload.query, context=payload.context)
