@@ -1,4 +1,4 @@
-﻿# Advanced-SE-group-project
+﻿# AI Architect
 
 A software engineering workbench that automates software design by suggesting optimal solution architectures based on high-level user requirements.
 
@@ -45,4 +45,5 @@ A software engineering workbench that automates software design by suggesting op
 ```
 User Requirements → NLP Analysis → Architecture Generation → Validation → Final Architecture
 ```
+
 
