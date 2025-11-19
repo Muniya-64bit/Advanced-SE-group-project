@@ -48,9 +48,15 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Force navigation even if logout fails
+      navigate("/login");
+    }
   };
 
   if (!isAuthenticated) {
@@ -63,10 +69,17 @@ const Dashboard = () => {
       <header className="bg-theme-bg-alt border-b border-theme-border sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <div className="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center relative overflow-hidden group">
                 <div className="absolute inset-0 bg-teal-500/5 blur-lg group-hover:bg-teal-500/10 transition-all duration-500"></div>
-                <Brain className="w-6 h-6 text-teal-500 relative z-10" />
+                <img
+                  src="/src/assets/architecture.png"
+                  alt="AI Architect Logo"
+                  className="w-6 h-6 object-contain relative z-10"
+                />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-theme-text">
@@ -76,7 +89,7 @@ const Dashboard = () => {
                   Design intelligent architectures
                 </p>
               </div>
-            </div>
+            </button>
 
             <div className="flex items-center space-x-2">
               <button
@@ -98,18 +111,14 @@ const Dashboard = () => {
                 )}
               </button>
               <div className="flex items-center space-x-3 ml-2 pl-2 border-l border-theme-border">
-                <img
-                  src={
-                    user?.picture ||
-                    "https://ui-avatars.com/api/?name=" +
-                      encodeURIComponent(user?.name || "User")
-                  }
-                  alt={user?.name}
-                  className="w-9 h-9 rounded-lg border border-theme-border"
-                />
+                <div className="w-9 h-9 bg-teal-500/10 rounded-lg flex items-center justify-center border border-theme-border">
+                  <Brain className="w-5 h-5 text-teal-500" />
+                </div>
                 <div className="hidden sm:block">
                   <p className="text-sm font-medium text-theme-text">
-                    {user?.name}
+                    {user?.user_metadata?.name ||
+                      user?.name ||
+                      user?.email?.split("@")[0]}
                   </p>
                   <p className="text-xs text-theme-text-muted">{user?.email}</p>
                 </div>
