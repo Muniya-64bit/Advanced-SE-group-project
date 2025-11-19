@@ -14,7 +14,6 @@ from app.models.requirements_model import (
 
 class NLPProcessor:
     def __init__(self):
-        """Initialize the NLP processor with spaCy model"""
         try:
             self.nlp = spacy.load("en_core_web_sm")
         except OSError:
@@ -23,7 +22,6 @@ class NLPProcessor:
             subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
             self.nlp = spacy.load("en_core_web_sm")
         
-        # Define patterns for requirement types
         self.nfr_patterns = {
             "performance": ["latency", "response time", "throughput", "speed", "fast", "milliseconds", "seconds", "performance"],
             "scalability": ["concurrent", "scale", "load", "traffic", "requests per second", "rps", "capacity"],
@@ -57,12 +55,8 @@ class NLPProcessor:
                             "search", "filter", "browse", "select", "submit", "approve", "reject"]
 
     def analyze_requirements(self, requirements_text: str, context: str = None) -> RequirementsAnalysisOutput:
-        """
-        Main method to analyze requirements text and extract structured information
-        """
         doc = self.nlp(requirements_text)
         
-        # Extract different components
         summary = self._generate_summary(requirements_text, doc)
         functional_reqs = self._extract_functional_requirements(doc, requirements_text)
         non_functional_reqs = self._extract_non_functional_requirements(doc, requirements_text)
@@ -89,7 +83,6 @@ class NLPProcessor:
         )
 
     def _generate_summary(self, text: str, doc) -> str:
-        """Generate a concise summary of the requirements"""
         sentences = [sent.text.strip() for sent in doc.sents]
         
         # Take first sentence and key points
@@ -109,7 +102,6 @@ class NLPProcessor:
         return ". ".join(summary_parts)[:200]
 
     def _extract_functional_requirements(self, doc, text: str) -> List[FunctionalRequirement]:
-        """Extract functional requirements (what the system should do)"""
         functional_reqs = []
         sentences = [sent.text.strip() for sent in doc.sents]
         
@@ -135,7 +127,6 @@ class NLPProcessor:
         return functional_reqs
 
     def _extract_non_functional_requirements(self, doc, text: str) -> List[NonFunctionalRequirement]:
-        """Extract non-functional requirements (quality attributes)"""
         nfr_list = []
         sentences = [sent.text.strip() for sent in doc.sents]
         
@@ -166,7 +157,6 @@ class NLPProcessor:
         return nfr_list
 
     def _extract_constraints(self, doc, text: str) -> List[Constraint]:
-        """Extract system constraints"""
         constraints = []
         sentences = [sent.text.strip() for sent in doc.sents]
         
@@ -203,15 +193,12 @@ class NLPProcessor:
         return constraints
 
     def _extract_actors(self, doc) -> List[str]:
-        """Extract actors/users from the text"""
         actors = set()
         
-        # Look for persons, roles
         for ent in doc.ents:
             if ent.label_ in ["PERSON", "ORG", "NORP"]:
                 actors.add(ent.text)
         
-        # Look for common role keywords
         role_keywords = ["user", "admin", "customer", "driver", "manager", "client", "seller", 
                         "buyer", "guest", "member", "owner", "operator", "employee", "staff"]
         
@@ -236,7 +223,6 @@ class NLPProcessor:
         return sorted(list(actors))
 
     def _extract_entities(self, doc) -> List[Entity]:
-        """Extract domain entities"""
         entities = []
         entity_dict = defaultdict(set)
         
@@ -246,9 +232,7 @@ class NLPProcessor:
         
         excluded_entities = ["application", "system", "latency", "processing", "matching"]
         
-        # Extract nouns as potential entities
         for chunk in doc.noun_chunks:
-            # Filter out common words
             if chunk.root.pos_ == "NOUN":
                 entity_name = chunk.root.text.lower()
                 
@@ -266,7 +250,6 @@ class NLPProcessor:
                     final_name = entity_name[:-1] if entity_name.endswith('s') and entity_name[:-1] in domain_keywords else entity_name
                     entity_dict[final_name.capitalize()].update(attributes)
         
-        # Convert to Entity objects
         for entity_name, attributes in entity_dict.items():
             entities.append(Entity(
                 name=entity_name,
@@ -274,10 +257,9 @@ class NLPProcessor:
                 attributes=list(attributes) if attributes else []
             ))
         
-        return entities[:10]  # Limit to top 10 entities
+        return entities[:10] 
 
     def _extract_relationships(self, doc, actors: List[str], entities: List[Entity]) -> List[Relationship]:
-        """Extract relationships between actors and entities"""
         relationships = []
         entity_names = [e.name for e in entities]
         
@@ -288,7 +270,6 @@ class NLPProcessor:
         for sent in doc.sents:
             for token in sent:
                 if token.pos_ == "VERB":
-                    # Find subject and object
                     subject = None
                     obj = None
                     
@@ -315,10 +296,9 @@ class NLPProcessor:
                             type=rel_type
                         ))
         
-        return relationships[:15]  # Limit relationships
+        return relationships[:15]  
 
     def _extract_business_rules(self, doc, text: str) -> List[BusinessRule]:
-        """Extract business rules"""
         rules = []
         sentences = [sent.text.strip() for sent in doc.sents]
         
@@ -341,7 +321,6 @@ class NLPProcessor:
         return rules
 
     def _extract_technologies(self, doc, text: str) -> List[str]:
-        """Extract mentioned technologies"""
         technologies = set()
         tech_keywords = ["aws", "azure", "gcp", "stripe", "paypal", "react", "angular", "vue", 
                         "python", "java", "node", "docker", "kubernetes", "mysql", "postgresql", 
@@ -354,8 +333,6 @@ class NLPProcessor:
         return sorted(list(technologies))
 
     def _extract_numeric_value(self, text: str) -> Tuple[str, str]:
-        """Extract numeric values and units from text"""
-        # Match patterns like "10000 users", "200ms", "99.9%"
         patterns = [
             r'(\d+(?:,\d+)*(?:\.\d+)?)\s*(%|ms|seconds?|minutes?|hours?|days?|users?|requests?|rpm|qps)',
             r'(\d+(?:,\d+)*(?:\.\d+)?)\s*(concurrent(?:ly)?|simultaneous(?:ly)?)'
@@ -371,7 +348,6 @@ class NLPProcessor:
         return None, None
 
     def _extract_constraint_value(self, text: str, constraint_type: str) -> str:
-        """Extract the specific value of a constraint"""
         text_lower = text.lower()
         
         if constraint_type == "technology":
@@ -408,7 +384,6 @@ class NLPProcessor:
         return self._is_strong_constraint(text)
 
     def _determine_priority(self, text: str) -> str:
-        """Determine priority based on keywords"""
         text_lower = text.lower()
         if any(word in text_lower for word in ["critical", "must", "essential", "required", "shall"]):
             return "high"
@@ -418,27 +393,22 @@ class NLPProcessor:
             return "low"
 
     def _determine_relationship_type(self, verb: str) -> str:
-        """Determine relationship type from verb"""
         for rel_type, verbs in self.relationship_verbs.items():
             if verb in verbs:
                 return rel_type
         return "interacts_with"
 
     def _calculate_confidence(self, doc, functional_reqs: List, non_functional_reqs: List) -> float:
-        """Calculate confidence score based on extracted information quality"""
-        score = 0.5  # Base score
+        score = 0.5 
         
-        # Increase confidence based on extracted requirements
         if len(functional_reqs) > 0:
             score += 0.2
         if len(non_functional_reqs) > 0:
             score += 0.15
         
-        # Increase based on text quality
-        if len(doc) > 20:  # Sufficient detail
+        if len(doc) > 20:  
             score += 0.1
         
-        # Check for clarity (presence of numbers, specific terms)
         if any(token.like_num for token in doc):
             score += 0.05
         
