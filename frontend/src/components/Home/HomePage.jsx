@@ -85,8 +85,12 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center">
-                <Brain className="w-6 h-6 text-teal-500" />
+              <div className="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center overflow-hidden">
+                <img
+                  src="/src/assets/architecture.png"
+                  alt="AI Architect Logo"
+                  className="w-6 h-6 object-contain"
+                />
               </div>
               <span className="text-xl font-semibold text-theme-text">
                 AI Architect
@@ -303,7 +307,11 @@ const HomePage = () => {
       <footer className="border-t border-theme-border bg-theme-bg-alt py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Brain className="w-5 h-5 text-teal-500" />
+            <img
+              src="/src/assets/architecture.png"
+              alt="AI Architect Logo"
+              className="w-5 h-5 object-contain"
+            />
             <span className="text-theme-text font-medium">AI Architect</span>
           </div>
           <p className="text-sm text-theme-text-muted">

@@ -103,8 +103,10 @@ const IssuesChat = ({ projectId }) => {
     if (!input.trim() || loading || !activeThread) return;
 
     const userMsg = input;
-    
-    // 2. Create the User Message Object
+    setInput("");
+    setLoading(true);
+
+    // Create user message
     const userMessage = {
       id: Date.now().toString(),
       role: "user",
@@ -112,10 +114,21 @@ const IssuesChat = ({ projectId }) => {
       timestamp: new Date().toISOString(),
     };
 
-    // 3. Optimistically update UI (Show user message immediately)
-    addMessageToThread(userMessage, true);
-    setInput("");
-    setLoading(true);
+    // Get current threads and add user message
+    const currentThreads = getIssueThreads(projectId);
+    const updatedThreadsWithUser = currentThreads.map((t) => {
+      if (t.id !== activeThreadId) return t;
+      const newTitle = !t.messages.length
+        ? userMsg.slice(0, 50) + (userMsg.length > 50 ? "..." : "")
+        : t.title;
+      return {
+        ...t,
+        title: newTitle,
+        messages: [...t.messages, userMessage],
+      };
+    });
+
+    setProjectIssueThreads(projectId, updatedThreadsWithUser);
 
     try {
       // 4. Prepare Contexts
@@ -136,14 +149,20 @@ const IssuesChat = ({ projectId }) => {
         chatHistory     // Previous Q&A in this specific thread
       );
 
-      // 6. Handle Response
-      addMessageToThread({
+      const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: response.message || response.response,
         timestamp: new Date().toISOString(),
+      };
+
+      // Add assistant message to the threads
+      const updatedThreadsWithAssistant = updatedThreadsWithUser.map((t) => {
+        if (t.id !== activeThreadId) return t;
+        return { ...t, messages: [...t.messages, assistantMessage] };
       });
 
+      setProjectIssueThreads(projectId, updatedThreadsWithAssistant);
     } catch (error) {
       console.error("Error sending message:", error);
       
@@ -153,12 +172,20 @@ const IssuesChat = ({ projectId }) => {
         getArchitectureContext(projectId)
       );
 
-      addMessageToThread({
+      const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: demoResponse,
         timestamp: new Date().toISOString(),
+      };
+
+      // Add assistant message to the threads
+      const updatedThreadsWithAssistant = updatedThreadsWithUser.map((t) => {
+        if (t.id !== activeThreadId) return t;
+        return { ...t, messages: [...t.messages, assistantMessage] };
       });
+
+      setProjectIssueThreads(projectId, updatedThreadsWithAssistant);
     } finally {
       setLoading(false);
     }
