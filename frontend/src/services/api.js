@@ -29,15 +29,18 @@ export const chatAPI = {
     return response.data;
   },
 
-  // Send message to issues Q&A chat with architecture context
-  sendIssueMessage: async (message, projectId, architectureContext) => {
-    const response = await api.post("/chat/ask/", {
-      query: message,
-      projectId,
-      chatType: "issue",
-      context: architectureContext, 
+  sendIssueMessage: async (message, projectId, context, chatHistory = []) => {
+    const response = await fetch(`${API_BASE_URL}/issues/chat`, { // Example URL
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,          // The new question
+        projectId,        
+        context,          // The architecture summary/JSON
+        history: chatHistory // The array of previous messages
+      }),
     });
-    return response.data;
+    return response.json();
   },
 
   // Enhance prompt using LLM

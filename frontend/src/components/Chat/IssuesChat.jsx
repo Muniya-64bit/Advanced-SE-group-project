@@ -99,9 +99,12 @@ const IssuesChat = ({ projectId }) => {
   };
 
   const handleSendMessage = async () => {
+    // 1. Basic Validation
     if (!input.trim() || loading || !activeThread) return;
 
     const userMsg = input;
+    
+    // 2. Create the User Message Object
     const userMessage = {
       id: Date.now().toString(),
       role: "user",
@@ -109,26 +112,42 @@ const IssuesChat = ({ projectId }) => {
       timestamp: new Date().toISOString(),
     };
 
+    // 3. Optimistically update UI (Show user message immediately)
     addMessageToThread(userMessage, true);
     setInput("");
     setLoading(true);
 
     try {
-      const context = getArchitectureContext(projectId);
+      // 4. Prepare Contexts
+      const archContext = getArchitectureContext(projectId);
+      
+      // Extract chat history from the active thread (excluding the message we just added conceptually)
+      // We map it to a clean format that the backend expects
+      const chatHistory = activeThread.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      // 5. Send to API with History
       const response = await chatAPI.sendIssueMessage(
-        userMsg,
-        projectId,
-        context
+        userMsg,        // Current Question
+        projectId,      // Project ID
+        archContext,    // Architecture Context (The big design doc)
+        chatHistory     // Previous Q&A in this specific thread
       );
 
+      // 6. Handle Response
       addMessageToThread({
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: response.message || response.response,
         timestamp: new Date().toISOString(),
       });
+
     } catch (error) {
       console.error("Error sending message:", error);
+      
+      // Fallback / Demo mode
       const demoResponse = generateDemoIssueResponse(
         userMsg,
         getArchitectureContext(projectId)

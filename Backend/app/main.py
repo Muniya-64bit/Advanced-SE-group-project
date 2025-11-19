@@ -5,6 +5,7 @@ from app.routes.nlp_routes import router as nlp_router
 from app.routes.context_routes import router as context_router
 from app.routes.chat import router as chat_router
 from app.routes.enhance import router as enhance_router
+from app.routes.issues import router as issues_router
 
 app = FastAPI(
     title="Advanced SE Architecture Workbench API",
@@ -36,3 +37,4 @@ app.include_router(nlp_router)
 app.include_router(context_router)
 app.include_router(chat_router)
 app.include_router(enhance_router) 
+app.include_router(issues_router)
