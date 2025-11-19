@@ -276,13 +276,15 @@ def stage_3_call_gemini_api(nlp_json: dict, dkb_results: dict) -> str:
         return "Error: GEMINI_API_KEY is not set. Cannot call the API."
 
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash') 
+        model = genai.GenerativeModel('gemini-2.5-pro') 
     except Exception as e:
         print(f"Error initializing Gemini model: {e}")
         return f"Error: Could not initialize Gemini model. {e}"
 
     nlp_json_str = json.dumps(nlp_json, indent=2)
     dkb_results_str = json.dumps(dkb_results, indent=2)
+
+    
 
     final_prompt_to_gemini = f"""
 You are an expert full-stack solution architect.
@@ -405,6 +407,32 @@ Long-term maintainability and extensibility benefits
 Do not reference the NLP or DKB stages.
 Do not explain how the system picked the architecture.
 Deliver the conclusion as if presenting to a CTO or lead engineer.
+
+**Diagram Requirement:**
+Provide a High-Level Architecture Diagram using Mermaid.js syntax.
+STRICT SYNTAX RULES:
+1. Start with `graph TD`.
+2. **Node IDs must be single words** (alphanumeric only, no spaces).
+3. **Labels must be in quotes inside brackets**.
+   - Correct: `Auth["Authentication Service"]`
+   - Incorrect: `Authentication Service`
+   - Incorrect: `Auth(Authentication Service)` (Parentheses often break parsing)
+4. Use specific shapes:
+   - `Rect["Service"]` for components (Square brackets)
+   - `DB[("Database")]` for databases (Cylinder shape)
+   - `User(("User"))` for actors (Circle shape)
+5. Use standard arrows `-->`.
+6. Wrap the code strictly in a mermaid block.
+
+Example of valid output:
+```mermaid
+graph TD
+    User(("User")) --> Client["Mobile App"]
+    Client --> Gateway["API Gateway"]
+    Gateway --> Auth["Auth Service"]
+    Gateway --> Core["Core Service"]
+    Core --> DB[("PostgreSQL")]
+    Core --> Cache[("Redis")]
 
 🎯 Hard Rules
 Do NOT mention NLP, DKB, fitScores, rankings, or metadata.

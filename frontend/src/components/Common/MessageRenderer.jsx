@@ -6,6 +6,7 @@ import mermaid from "mermaid";
 // Initialize Mermaid
 mermaid.initialize({
   startOnLoad: false,
+  suppressErrorRendering: true,
   theme: "dark",
   securityLevel: "loose",
   themeVariables: {

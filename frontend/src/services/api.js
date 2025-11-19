@@ -35,16 +35,16 @@ export const chatAPI = {
       query: message,
       projectId,
       chatType: "issue",
-      context: architectureContext, // Include architecture context
+      context: architectureContext, 
     });
     return response.data;
   },
 
   // Enhance prompt using LLM
   enhancePrompt: async (prompt) => {
-    const response = await api.post("/chat.py", {
+    const response = await api.post("/enhance", {
       message: prompt,
-      action: "enhance",
+      // action: "enhance",
     });
     return response.data;
   },

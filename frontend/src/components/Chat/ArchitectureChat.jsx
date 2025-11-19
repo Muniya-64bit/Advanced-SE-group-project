@@ -1,3 +1,175 @@
+
+// // Demo response generator
+// function generateDemoArchitectureResponse(prompt) {
+//   return `# Software Architecture Design
+
+// ## 1. **Functional Requirements**
+// - User authentication and authorization
+// - Data processing and management
+// - Real-time notifications
+// - RESTful API endpoints
+// - Admin dashboard for monitoring
+
+// ## 2. **Non-Functional Requirements**
+// - **Performance**: Response time < 200ms for 95% of requests
+// - **Scalability**: Support 10,000+ concurrent users
+// - **Availability**: 99.9% uptime
+// - **Security**: End-to-end encryption, OWASP compliance
+// - **Maintainability**: Modular architecture with clear separation of concerns
+
+// ## 3. **Architectural Patterns & Styles**
+// - **Microservices Architecture**: For scalability and independent deployment
+// - **Event-Driven Architecture**: For real-time updates and decoupling
+// - **CQRS Pattern**: Separate read and write operations
+// - **API Gateway Pattern**: Single entry point for clients
+
+// ## 4. **High-Level Architecture Diagram**
+
+// \`\`\`mermaid
+// graph TB
+//     Client[Client Applications]
+//     Gateway[API Gateway]
+//     Auth[Auth Service]
+//     User[User Service]
+//     Data[Data Service]
+//     Event[Event Bus]
+//     DB1[(User DB)]
+//     DB2[(Data DB)]
+//     Cache[(Redis Cache)]
+    
+//     Client -->|HTTPS| Gateway
+//     Gateway --> Auth
+//     Gateway --> User
+//     Gateway --> Data
+//     Auth --> DB1
+//     User --> DB1
+//     Data --> DB2
+//     User --> Cache
+//     Data --> Event
+//     Event --> User
+// \`\`\`
+
+// ## 5. **Component Diagram**
+
+// \`\`\`mermaid
+// classDiagram
+//     class APIGateway {
+//         +routeRequest()
+//         +authenticate()
+//         +rateLimit()
+//     }
+//     class AuthService {
+//         +login()
+//         +register()
+//         +validateToken()
+//     }
+//     class UserService {
+//         +getUser()
+//         +updateUser()
+//         +deleteUser()
+//     }
+//     class DataService {
+//         +createData()
+//         +getData()
+//         +processData()
+//     }
+    
+//     APIGateway --> AuthService
+//     APIGateway --> UserService
+//     APIGateway --> DataService
+//     UserService --> AuthService
+//     DataService --> UserService
+// \`\`\`
+
+// ## 6. **Technology Stack Recommendations**
+
+// ### **Backend**
+// - **Framework**: Node.js with Express or NestJS
+// - **Language**: TypeScript for type safety
+// - **API**: GraphQL or REST with OpenAPI specification
+
+// ### **Frontend**
+// - **Framework**: React with Next.js for SSR
+// - **State Management**: Redux Toolkit or Zustand
+// - **UI Library**: TailwindCSS with Radix UI
+
+// ### **Database**
+// - **Primary**: PostgreSQL for relational data
+// - **Cache**: Redis for session and frequently accessed data
+// - **Search**: Elasticsearch for full-text search
+
+// ### **Infrastructure**
+// - **Cloud Provider**: AWS or Google Cloud Platform
+// - **Container Orchestration**: Kubernetes
+// - **CI/CD**: GitHub Actions or GitLab CI
+
+// ## 7. **Data & Storage Management**
+
+// ### **Database Schema Design**
+// - Normalized relational schema for transactional data
+// - Denormalized read models for query optimization
+// - Partitioning strategy for large tables
+
+// ### **Caching Strategy**
+// - Cache-aside pattern for frequently accessed data
+// - Write-through cache for critical updates
+// - TTL-based expiration policies
+
+// ### **Backup & Recovery**
+// - Daily automated backups
+// - Point-in-time recovery capability
+// - Multi-region replication for disaster recovery
+
+// ## 8. **Integration & Third-party Services**
+// - **Authentication**: OAuth 2.0 with Google, GitHub
+// - **Payment Processing**: Stripe or PayPal integration
+// - **Email Service**: SendGrid or AWS SES
+// - **Monitoring**: Datadog or New Relic
+// - **Logging**: ELK Stack (Elasticsearch, Logstash, Kibana)
+
+// ## 9. **Deployment Strategy**
+
+// ### **Containerization**
+// - Docker containers for all services
+// - Multi-stage builds for optimized images
+// - Health checks and readiness probes
+
+// ### **Orchestration**
+// - Kubernetes for container orchestration
+// - Horizontal Pod Autoscaling based on CPU/memory
+// - Blue-green deployment for zero downtime
+
+// ### **CI/CD Pipeline**
+// \`\`\`mermaid
+// graph LR
+//     A[Code Commit] --> B[Build]
+//     B --> C[Test]
+//     C --> D[Security Scan]
+//     D --> E[Deploy to Staging]
+//     E --> F[Integration Tests]
+//     F --> G[Deploy to Production]
+//     G --> H[Monitor]
+// \`\`\`
+
+// ## 10. **Security Considerations**
+// - **Authentication**: JWT tokens with short expiration
+// - **Authorization**: Role-based access control (RBAC)
+// - **Data Encryption**: TLS 1.3 in transit, AES-256 at rest
+// - **API Security**: Rate limiting, input validation, SQL injection prevention
+// - **Secrets Management**: HashiCorp Vault or AWS Secrets Manager
+
+// ## 11. **Monitoring & Observability**
+// - **Metrics**: Prometheus for metrics collection
+// - **Tracing**: Jaeger for distributed tracing
+// - **Logging**: Centralized logging with correlation IDs
+// - **Alerting**: PagerDuty for incident management
+
+// This architecture provides a solid foundation for building a scalable, secure, and maintainable system. Adjust based on specific requirements and constraints of your project.`;
+// }
+
+// export default ArchitectureChat;
+
+
 import { useState, useRef, useEffect } from "react";
 import { chatAPI } from "../../services/api";
 import { Send, Sparkles, Loader2, MessageSquare } from "lucide-react";
@@ -20,13 +192,6 @@ const ArchitectureChat = ({ projectId }) => {
 
   // Get only assistant messages for the response panel
   const assistantMessages = messages.filter((msg) => msg.role === "assistant");
-
-  // Debug: Log messages when they change
-  useEffect(() => {
-    console.log("Total messages:", messages.length);
-    console.log("Assistant messages:", assistantMessages.length);
-    console.log("Selected index:", selectedMessageIndex);
-  }, [messages.length, assistantMessages.length, selectedMessageIndex]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,7 +226,6 @@ const ArchitectureChat = ({ projectId }) => {
       setInput(response.enhancedPrompt || response.message);
     } catch (error) {
       console.error("Error enhancing prompt:", error);
-      // Fallback enhancement for demo
       const enhanced = `Please design a comprehensive software architecture for: ${input}\n\nInclude:\n- Functional and non-functional requirements\n- Architectural patterns and styles\n- High-level architecture diagram\n- Technology stack recommendations\n- Data management strategies\n- Integration approaches\n- Deployment considerations\n- Scalability and performance aspects`;
       setInput(enhanced);
     } finally {
@@ -79,26 +243,32 @@ const ArchitectureChat = ({ projectId }) => {
       timestamp: new Date().toISOString(),
     };
 
-    // Add user message to chat context (saves to localStorage)
+    // Add user message to chat context
     addMessage(projectId, "architecture", userMessage);
     setInput("");
     setLoading(true);
 
     try {
       const response = await chatAPI.sendArchitectureMessage(input, projectId);
-      response = "djwbdbwudw";
-      console.log("API Response:", response);
+      console.log("API Response Full Object:", response);
+
+      // FIX: Robust check for content fields
+      const contentToRender = 
+        response.recommendation || 
+        response.message || 
+        response.response || 
+        "Content generation failed or returned empty.";
+
+      const summaryForContext = response.summary || "Architecture update";
 
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: response.message || response.response,
+        content: contentToRender,
         timestamp: new Date().toISOString(),
       };
 
-      console.log("Assistant message created:", assistantMessage);
-
-      // Add assistant message to chat context (saves to localStorage)
+      // Add assistant message to chat context
       addMessage(projectId, "architecture", assistantMessage);
 
       // Get updated messages for context
@@ -107,14 +277,14 @@ const ArchitectureChat = ({ projectId }) => {
       // Update architecture context for use in Issues chat
       updateArchitectureContext(projectId, {
         lastUpdate: new Date().toISOString(),
-        summary: response.message || response.response,
+        summary: summaryForContext,
         messages: updatedMessages,
+        nlpData: response.nlp 
       });
     } catch (error) {
       console.error("Error sending message:", error);
-      // Fallback response for demo
       const demoResponse = generateDemoArchitectureResponse(input);
-      console.log("Using demo response");
+      
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
@@ -122,18 +292,13 @@ const ArchitectureChat = ({ projectId }) => {
         timestamp: new Date().toISOString(),
       };
 
-      console.log("Demo assistant message created:", assistantMessage);
-
-      // Add assistant message to chat context (saves to localStorage)
       addMessage(projectId, "architecture", assistantMessage);
 
-      // Get updated messages for context
       const updatedMessages = [...messages, userMessage, assistantMessage];
 
-      // Update architecture context
       updateArchitectureContext(projectId, {
         lastUpdate: new Date().toISOString(),
-        summary: demoResponse,
+        summary: demoResponse.substring(0, 100) + "...",
         messages: updatedMessages,
       });
     } finally {
@@ -157,18 +322,18 @@ const ArchitectureChat = ({ projectId }) => {
                 Start Architecture Design
               </h3>
               <p className="text-sm text-theme-text-muted px-4">
-                Describe your project and get comprehensive architecture
-                recommendations
+                Describe your project and get comprehensive architecture recommendations
               </p>
             </div>
           ) : (
-            messages.map((message, index) => (
+            messages.map((message) => (
               <div key={message.id}>
                 {message.role === "user" ? (
                   <div className="flex justify-start mb-4">
                     <div className="bg-theme-bg-dark border border-theme-border rounded-lg px-4 py-2.5 max-w-[85%] hover:border-teal-500/50 transition-all duration-300">
                       <p className="text-sm text-theme-text whitespace-pre-wrap">
-                        {message.content}
+                        {/* Check for content existence */}
+                        {message.content || ""}
                       </p>
                     </div>
                   </div>
@@ -181,19 +346,22 @@ const ArchitectureChat = ({ projectId }) => {
                       <button
                         onClick={() =>
                           setSelectedMessageIndex(
-                            assistantMessages.findIndex(
-                              (m) => m.id === message.id
-                            )
+                            assistantMessages.findIndex((m) => m.id === message.id)
                           )
                         }
-                        className="w-full text-left bg-theme-bg-dark hover:bg-theme-border border border-theme-border rounded-lg px-3 py-2 transition-all duration-300 relative overflow-hidden"
+                        className={`w-full text-left bg-theme-bg-dark hover:bg-theme-border border rounded-lg px-3 py-2 transition-all duration-300 relative overflow-hidden ${
+                          selectedMessageIndex === assistantMessages.findIndex((m) => m.id === message.id)
+                            ? "border-teal-500/50 bg-teal-500/5"
+                            : "border-theme-border"
+                        }`}
                       >
                         <div className="absolute inset-0 bg-teal-500/0 group-hover:bg-teal-500/5 transition-all duration-500"></div>
                         <p className="text-xs text-theme-text-muted mb-1 relative z-10">
                           {new Date(message.timestamp).toLocaleString()}
                         </p>
                         <p className="text-sm text-theme-text line-clamp-2 relative z-10">
-                          Architecture design generated
+                           {/* FIX: Safe substring method */}
+                           {(message.content || "Response generated").substring(0, 60)}...
                         </p>
                       </button>
                     </div>
@@ -299,7 +467,7 @@ const ArchitectureChat = ({ projectId }) => {
               </div>
               <div className="prose-invert max-w-none">
                 <MessageRenderer
-                  content={assistantMessages[selectedMessageIndex].content}
+                  content={assistantMessages[selectedMessageIndex].content || "No content available."}
                 />
               </div>
               <div ref={responseEndRef} />
@@ -315,8 +483,7 @@ const ArchitectureChat = ({ projectId }) => {
                   Architecture Design Panel
                 </h3>
                 <p className="text-sm text-theme-text-muted max-w-md">
-                  Your architecture designs with diagrams and detailed
-                  recommendations will appear here
+                  Your architecture designs with diagrams and detailed recommendations will appear here
                 </p>
               </div>
             </div>
@@ -327,172 +494,11 @@ const ArchitectureChat = ({ projectId }) => {
   );
 };
 
-// Demo response generator
 function generateDemoArchitectureResponse(prompt) {
-  return `# Software Architecture Design
-
-## 1. **Functional Requirements**
-- User authentication and authorization
-- Data processing and management
-- Real-time notifications
-- RESTful API endpoints
-- Admin dashboard for monitoring
-
-## 2. **Non-Functional Requirements**
-- **Performance**: Response time < 200ms for 95% of requests
-- **Scalability**: Support 10,000+ concurrent users
-- **Availability**: 99.9% uptime
-- **Security**: End-to-end encryption, OWASP compliance
-- **Maintainability**: Modular architecture with clear separation of concerns
-
-## 3. **Architectural Patterns & Styles**
-- **Microservices Architecture**: For scalability and independent deployment
-- **Event-Driven Architecture**: For real-time updates and decoupling
-- **CQRS Pattern**: Separate read and write operations
-- **API Gateway Pattern**: Single entry point for clients
-
-## 4. **High-Level Architecture Diagram**
-
-\`\`\`mermaid
-graph TB
-    Client[Client Applications]
-    Gateway[API Gateway]
-    Auth[Auth Service]
-    User[User Service]
-    Data[Data Service]
-    Event[Event Bus]
-    DB1[(User DB)]
-    DB2[(Data DB)]
-    Cache[(Redis Cache)]
-    
-    Client -->|HTTPS| Gateway
-    Gateway --> Auth
-    Gateway --> User
-    Gateway --> Data
-    Auth --> DB1
-    User --> DB1
-    Data --> DB2
-    User --> Cache
-    Data --> Event
-    Event --> User
-\`\`\`
-
-## 5. **Component Diagram**
-
-\`\`\`mermaid
-classDiagram
-    class APIGateway {
-        +routeRequest()
-        +authenticate()
-        +rateLimit()
-    }
-    class AuthService {
-        +login()
-        +register()
-        +validateToken()
-    }
-    class UserService {
-        +getUser()
-        +updateUser()
-        +deleteUser()
-    }
-    class DataService {
-        +createData()
-        +getData()
-        +processData()
-    }
-    
-    APIGateway --> AuthService
-    APIGateway --> UserService
-    APIGateway --> DataService
-    UserService --> AuthService
-    DataService --> UserService
-\`\`\`
-
-## 6. **Technology Stack Recommendations**
-
-### **Backend**
-- **Framework**: Node.js with Express or NestJS
-- **Language**: TypeScript for type safety
-- **API**: GraphQL or REST with OpenAPI specification
-
-### **Frontend**
-- **Framework**: React with Next.js for SSR
-- **State Management**: Redux Toolkit or Zustand
-- **UI Library**: TailwindCSS with Radix UI
-
-### **Database**
-- **Primary**: PostgreSQL for relational data
-- **Cache**: Redis for session and frequently accessed data
-- **Search**: Elasticsearch for full-text search
-
-### **Infrastructure**
-- **Cloud Provider**: AWS or Google Cloud Platform
-- **Container Orchestration**: Kubernetes
-- **CI/CD**: GitHub Actions or GitLab CI
-
-## 7. **Data & Storage Management**
-
-### **Database Schema Design**
-- Normalized relational schema for transactional data
-- Denormalized read models for query optimization
-- Partitioning strategy for large tables
-
-### **Caching Strategy**
-- Cache-aside pattern for frequently accessed data
-- Write-through cache for critical updates
-- TTL-based expiration policies
-
-### **Backup & Recovery**
-- Daily automated backups
-- Point-in-time recovery capability
-- Multi-region replication for disaster recovery
-
-## 8. **Integration & Third-party Services**
-- **Authentication**: OAuth 2.0 with Google, GitHub
-- **Payment Processing**: Stripe or PayPal integration
-- **Email Service**: SendGrid or AWS SES
-- **Monitoring**: Datadog or New Relic
-- **Logging**: ELK Stack (Elasticsearch, Logstash, Kibana)
-
-## 9. **Deployment Strategy**
-
-### **Containerization**
-- Docker containers for all services
-- Multi-stage builds for optimized images
-- Health checks and readiness probes
-
-### **Orchestration**
-- Kubernetes for container orchestration
-- Horizontal Pod Autoscaling based on CPU/memory
-- Blue-green deployment for zero downtime
-
-### **CI/CD Pipeline**
-\`\`\`mermaid
-graph LR
-    A[Code Commit] --> B[Build]
-    B --> C[Test]
-    C --> D[Security Scan]
-    D --> E[Deploy to Staging]
-    E --> F[Integration Tests]
-    F --> G[Deploy to Production]
-    G --> H[Monitor]
-\`\`\`
-
-## 10. **Security Considerations**
-- **Authentication**: JWT tokens with short expiration
-- **Authorization**: Role-based access control (RBAC)
-- **Data Encryption**: TLS 1.3 in transit, AES-256 at rest
-- **API Security**: Rate limiting, input validation, SQL injection prevention
-- **Secrets Management**: HashiCorp Vault or AWS Secrets Manager
-
-## 11. **Monitoring & Observability**
-- **Metrics**: Prometheus for metrics collection
-- **Tracing**: Jaeger for distributed tracing
-- **Logging**: Centralized logging with correlation IDs
-- **Alerting**: PagerDuty for incident management
-
-This architecture provides a solid foundation for building a scalable, secure, and maintainable system. Adjust based on specific requirements and constraints of your project.`;
+  // ... (Keep your existing demo function here) ...
+  return `# Software Architecture Design for ${prompt}
+  ... (rest of your demo string) ...
+  `
 }
 
 export default ArchitectureChat;

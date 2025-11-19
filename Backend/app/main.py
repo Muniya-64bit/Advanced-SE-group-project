@@ -4,6 +4,7 @@ from app.routes.health import router as health_router
 from app.routes.nlp_routes import router as nlp_router
 from app.routes.context_routes import router as context_router
 from app.routes.chat import router as chat_router
+from app.routes.enhance import router as enhance_router
 
 app = FastAPI(
     title="Advanced SE Architecture Workbench API",
@@ -20,7 +21,6 @@ app = FastAPI(
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    # Add more origins as needed
 ]
 
 app.add_middleware(
@@ -35,3 +35,4 @@ app.include_router(health_router)
 app.include_router(nlp_router)
 app.include_router(context_router)
 app.include_router(chat_router)
+app.include_router(enhance_router) 
